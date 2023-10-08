@@ -4,6 +4,7 @@ let BrandUsersSchema = mongoose.Schema({
     email: String,
     phoneNumber: String,
     companyName: String,
+    countryCode: String,
     country: String,
     city: String,
     password: String,

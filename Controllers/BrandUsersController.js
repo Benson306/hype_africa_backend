@@ -40,6 +40,7 @@ app.post('/brand_signup', urlEncoded, (req, res)=>{
                         email,
                         phoneNumber,
                         companyName: req.body.companyName,
+                        countryCode: req.body.countryCode,
                         country: req.body.country,
                         city: req.body.city,
                         password: hash,
@@ -103,7 +104,7 @@ const upload = multer({ storage })
 
 app.post('/complete_profile', upload.single('image'), urlEncoded, (req, res)=>{
     let brand_logo = req.file.filename;
-    let user_id = '65228c25e56af4a32c22f045';
+    let user_id = req.body.user_id;
     let brand_name = req.body.brandName;
     let about = req.body.about;
 
@@ -123,4 +124,35 @@ app.post('/complete_profile', upload.single('image'), urlEncoded, (req, res)=>{
     })
 })
 
+
+app.get('/profile/:id', urlEncoded, (req, res)=>{
+    let uid = req.params.id;
+
+    let response = { };
+
+    BrandUsersModel.findOne({ _id: uid})
+    .then((data)=>{
+        if(data){
+            response.email = data.email;
+            response.phoneNumber = data.phoneNumber;
+            response.companyName = data.companyName;
+            response.country = data.country;
+            response.city = data.city;
+            response.countryCode = data.countryCode;
+
+            BrandProfileModel.findOne({ user_id : uid})
+            .then((profile)=>{
+                if(profile){
+                    response.brand_name = profile.brand_name;
+                    response.about = profile.about;
+                    response.brand_logo = profile.brand_logo;
+
+                    res.json(response);
+                }
+            })
+
+        }
+    })
+
+})
 module.exports = app;
