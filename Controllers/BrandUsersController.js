@@ -57,4 +57,29 @@ app.post('/brand_signup', urlEncoded, (req, res)=>{
 
 } )
 
+app.post('/brand_login', urlEncoded, (req,res)=>{
+    let email = req.body.email;
+    let password = req.body.password;
+
+    BrandUsersModel.findOne({ email : email})
+    .then(data =>{
+        if(data){
+            bcrypt.compare(password, data.password, function(err, result) {
+                if(result === true){
+                    let response = {
+                        status: 'success',
+                        uid: data._id,
+                        isComplete: data.isComplete,
+                    }
+                    res.json(response);
+                }else{
+                    res.json('Failed'); // Password Does Not Match
+                }
+            });
+        }else{
+            res.json("Failed"); //User Does Not Exist
+        }
+    })
+})
+
 module.exports = app;
