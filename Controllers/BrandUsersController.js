@@ -4,8 +4,16 @@ let app = express.Router();
 
 let bodyParser = require('body-parser');
 
+const multer = require('multer'); // For handling file uploads
+
+const fs = require('fs'); // For working with the file system
+
+const path = require('path'); // For handling file paths
+
 const bcrypt = require('bcrypt');
+
 const BrandUsersModel = require('../Models/BrandUsersModel');
+const BrandProfileModel = require('../Models/BrandProfileModel');
 
 let urlEncoded = bodyParser.urlencoded({ extended: false});
 
@@ -79,6 +87,39 @@ app.post('/brand_login', urlEncoded, (req,res)=>{
         }else{
             res.json("Failed"); //User Does Not Exist
         }
+    })
+})
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb)=>{
+        cb(null, './uploads');
+    },
+    filename: (req, file, cb)=>{
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({ storage })
+
+app.post('/complete_profile', upload.single('image'), urlEncoded, (req, res)=>{
+    let brand_logo = req.file.filename;
+    let user_id = '65228c25e56af4a32c22f045';
+    let brand_name = req.body.brandName;
+    let about = req.body.about;
+
+    let data = {
+        user_id,
+        brand_logo,
+        brand_name,
+        about
+    }
+
+    BrandProfileModel(data).save()
+    .then(()=>{
+        BrandUsersModel.findOneAndUpdate({_id: user_id}, { isComplete: true},{ new: true})
+        .then(()=>{
+            res.json({status: 'success'})
+        })
     })
 })
 
