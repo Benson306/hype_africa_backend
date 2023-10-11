@@ -155,4 +155,46 @@ app.get('/profile/:id', urlEncoded, (req, res)=>{
     })
 
 })
+
+app.put('/profileWithImage/:id', upload.single('image'), urlEncoded, (req, res)=>{
+    let brand_logo = req.file.filename;
+    let user_id = req.body.user_id;
+    let brand_name = req.body.brand_name;
+    let about = req.body.about;
+    let email = req.body.email;
+    let phoneNumber = req.body.phoneNumber;
+    let companyName = req.body.companyName;
+    let countryCode = req.body.countryCode;
+    let country = req.body.country;
+    let city = req.body.city;
+
+    BrandUsersModel.findOneAndUpdate({_id: user_id}, { email: email, phoneNumber: phoneNumber, companyName: companyName, country: country, city: city, countryCode: countryCode },{new: true})
+    .then(()=>{
+        BrandProfileModel.findOneAndUpdate({user_id: user_id},{brand_name: brand_name, about: about, brand_logo: brand_logo},{new: true})
+        .then(()=>{
+            res.json('success')
+        })
+    })
+})
+
+app.put('/profileWithoutImage/:id', urlEncoded, (req, res)=>{
+    let user_id = req.body.user_id;
+    let brand_name = req.body.brand_name;
+    let about = req.body.about;
+    let email = req.body.email;
+    let phoneNumber = req.body.phoneNumber;
+    let companyName = req.body.companyName;
+    let countryCode = req.body.countryCode;
+    let country = req.body.country;
+    let city = req.body.city;
+
+    BrandUsersModel.findOneAndUpdate({_id: user_id}, { email: email, phoneNumber: phoneNumber, companyName: companyName, country: country, city: city, countryCode: countryCode },{new: true})
+    .then(()=>{
+        BrandProfileModel.findOneAndUpdate({user_id: user_id},{brand_name: brand_name, about: about},{new: true})
+        .then(()=>{
+            res.json('success')
+        })
+    })
+
+})
 module.exports = app;
