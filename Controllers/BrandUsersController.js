@@ -197,4 +197,35 @@ app.put('/profileWithoutImage/:id', urlEncoded, (req, res)=>{
     })
 
 })
+
+
+app.put('/change_password/:id', urlEncoded, (req, res)=>{
+    let id = req.params.id;
+
+    let oldPassword = req.body.oldPassword;
+    let newPassword = req.body.newPassword;
+
+    BrandUsersModel.findOne({_id: id})
+    .then(data => {
+        console.log(data)
+        if(data){
+            bcrypt.compare(oldPassword, data.password, function(err, result) {
+                if(result === true){
+                    bcrypt.hash(newPassword, Number(process.env.saltRounds), function(err, hash) {
+                        BrandUsersModel.findOneAndUpdate({_id: id}, { password: hash}, { new : true})
+                        .then(()=>{
+                            res.json("success");
+                        })
+                    })
+                    
+                }else{
+                    res.json('failed'); // Password Does Not Match
+                }
+            })
+        }else{
+            res.json('failed')
+        }
+    })
+})
+
 module.exports = app;
