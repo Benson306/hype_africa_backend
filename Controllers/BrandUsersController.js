@@ -17,6 +17,7 @@ const BrandProfileModel = require('../Models/BrandProfileModel');
 
 let urlEncoded = bodyParser.urlencoded({ extended: false});
 
+
 app.post('/brand_signup', urlEncoded, (req, res)=>{
     let email = req.body.email;
     let password = req.body.password;

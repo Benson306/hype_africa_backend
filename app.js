@@ -25,6 +25,10 @@ let BrandUsersController = require('./Controllers/BrandUsersController');
 
 app.use('/',BrandUsersController);
 
+let CampaignsController = require('./Controllers/CampaignsController');
+
+app.use('/',CampaignsController);
+
 app.listen(port, ()=>{
     console.log(`Connected on port ${port}`);
 })
