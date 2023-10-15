@@ -62,6 +62,83 @@ app.post('/add_influencer_campaign', upload.single('cover'), urlEncoded, (req, r
     
 })
 
+app.post('/add_influencer_draft_with_image', upload.single('cover'), urlEncoded, (req, res)=>{
+
+    let data = {
+        status: 'draft',
+        type: "influencer",
+        user_id: req.body.id,
+        title: req.body.title,
+        cover: req.file.filename,
+        objective: req.body.objective,
+        industry: req.body.industry,
+        call_to_action: req.body.call_to_action,
+        dos: req.body.dos,
+        donts: req.body.donts,
+        instagramTags: req.body.instagramTags,
+        xTags: req.body.xTags,
+        fbTags: req.body.fbTags,
+        gender: req.body.gender,
+        minAge: req.body.minAge,
+        maxAge: req.body.maxAge,
+        instaFollowers: req.body.instaFollowers,
+        xFollowers: req.body.xFollowers,
+        fbFollowers: req.body.fbFollowers,
+        location: req.body.location,
+        budget: req.body.budget,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+        numberOfDays: req.body.numberOfDays
+    }
+
+    CampaignsModel(data).save()
+    .then(()=>{
+        res.json('success');
+    })
+
+    
+})
+
+
+app.post('/add_influencer_draft_without_image', urlEncoded, (req, res)=>{
+
+    console.log(req.body)
+
+    let data = {
+        status: 'draft',
+        type: "influencer",
+        user_id: req.body.id,
+        title: req.body.title,
+        cover: "null",
+        objective: req.body.objective,
+        industry: req.body.industry,
+        call_to_action: req.body.call_to_action,
+        dos: req.body.dos,
+        donts: req.body.donts,
+        instagramTags: req.body.instagramTags,
+        xTags: req.body.xTags,
+        fbTags: req.body.fbTags,
+        gender: req.body.gender,
+        minAge: req.body.minAge,
+        maxAge: req.body.maxAge,
+        instaFollowers: req.body.instaFollowers,
+        xFollowers: req.body.xFollowers,
+        fbFollowers: req.body.fbFollowers,
+        location: req.body.location,
+        budget: req.body.budget,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+        numberOfDays: req.body.numberOfDays
+    }
+
+    CampaignsModel(data).save()
+    .then(()=>{
+        res.json('success');
+    })
+
+    
+})
+
 
 app.get('/get_campaigns/:id/:type', urlEncoded, (req, res)=>{
 
