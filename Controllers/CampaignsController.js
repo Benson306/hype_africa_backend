@@ -27,10 +27,9 @@ const upload = multer({ storage })
 
 app.post('/add_influencer_campaign', upload.single('cover'), urlEncoded, (req, res)=>{
 
-    console.log(req.body.id);
-    
     let data = {
         status: 'complete',
+        type: "influencer",
         user_id: req.body.id,
         title: req.body.title,
         cover: req.file.filename,
@@ -60,6 +59,32 @@ app.post('/add_influencer_campaign', upload.single('cover'), urlEncoded, (req, r
         res.json('success');
     })
 
+    
+})
+
+
+app.get('/get_campaigns/:id/:type', urlEncoded, (req, res)=>{
+
+    if(req.params.type == "all"){
+        CampaignsModel.find({ user_id: req.params.id })
+        .then((data)=>{
+            res.json(data);
+        })
+    }else{
+        CampaignsModel.find({ $and: [ {user_id: req.params.id}, {status: req.params.type}] })
+        .then((data)=>{
+            res.json(data);
+        })
+    }
+    
+})
+
+app.get('/get_campaign/:id/:url', urlEncoded, (req, res)=>{
+
+    CampaignsModel.findOne({ $and: [ {user_id: req.params.id}, {_id: req.params.url}] })
+    .then((data)=>{
+        res.json(data);
+    })
     
 })
 
