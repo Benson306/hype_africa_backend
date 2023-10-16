@@ -9,9 +9,10 @@ const multer = require('multer'); // For handling file uploads
 const fs = require('fs'); // For working with the file system
 
 const path = require('path'); // For handling file paths
+
 const CampaignsModel = require('../Models/CampaignsModels');
 
-let urlEncoded = bodyParser.urlencoded({ extended: false});
+let urlEncoded = bodyParser.urlencoded({extended: false, limit: '50mb'});
 
 const storage = multer.diskStorage({
     destination: (req, file, cb)=>{
@@ -64,6 +65,7 @@ app.post('/add_influencer_campaign', upload.single('cover'), urlEncoded, (req, r
 
 app.post('/add_influencer_draft_with_image', upload.single('cover'), urlEncoded, (req, res)=>{
 
+    // console.log(req.body)
     let data = {
         status: 'draft',
         type: "influencer",
@@ -101,8 +103,6 @@ app.post('/add_influencer_draft_with_image', upload.single('cover'), urlEncoded,
 
 
 app.post('/add_influencer_draft_without_image', urlEncoded, (req, res)=>{
-
-    console.log(req.body)
 
     let data = {
         status: 'draft',
@@ -163,6 +163,16 @@ app.get('/get_campaign/:id/:url', urlEncoded, (req, res)=>{
         res.json(data);
     })
     
+})
+
+app.delete('/del_campaign/:user_id/:campaign_id', urlEncoded, (req, res)=>{
+    let user_id = req.params.user_id;
+    let campaign_id = req.params.campaign_id;
+
+    CampaignsModel.findOneAndDelete({ $and: [ {user_id: user_id}, {_id: campaign_id}] })
+    .then(()=>{
+        res.json('success');
+    })
 })
 
 
