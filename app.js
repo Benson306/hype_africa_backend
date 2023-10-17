@@ -29,6 +29,9 @@ let CampaignsController = require('./Controllers/CampaignsController');
 
 app.use('/',CampaignsController);
 
+let CreatorProfileController = require('./Controllers/CreatorProfileController')
+app.use('/', CreatorProfileController)
+
 app.listen(port, ()=>{
     console.log(`Connected on port ${port}`);
 })
