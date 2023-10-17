@@ -54,4 +54,26 @@ app.post('/create_creator_profile', urlEncoded, (req, res)=>{
     
 } )
 
+app.post('/creator_login', urlEncoded, (req, res)=>{
+    CreatorProfileModel.findOne({ email : req.body.email})
+    .then(data => {
+        if(data){
+            bcrypt.compare(req.body.password, data.password, function(err, result) {
+                if(result === true){
+                    let response = {
+                        status: 'success',
+                        uid: data._id,
+                        isComplete: data.isComplete,
+                    }
+                    res.json(response);
+                }else{
+                    res.json({status: 'failed'}); // Password Does Not Match
+                }
+            })
+        }else{
+            res.json({ status: 'failed' })
+        }
+    })
+})
+
 module.exports = app;
