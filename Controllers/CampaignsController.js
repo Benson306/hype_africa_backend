@@ -156,6 +156,22 @@ app.get('/get_campaigns/:id/:type', urlEncoded, (req, res)=>{
     
 })
 
+app.get('/get_campaigns/:type', urlEncoded, (req, res)=>{
+
+    if(req.params.type == "all"){
+        CampaignsModel.find()
+        .then((data)=>{
+            res.json(data);
+        })
+    }else{
+        CampaignsModel.find({status: req.params.type})
+        .then((data)=>{
+            res.json(data);
+        })
+    }
+    
+})
+
 app.get('/get_campaign/:id/:url', urlEncoded, (req, res)=>{
 
     CampaignsModel.findOne({ $and: [ {user_id: req.params.id}, {_id: req.params.url}] })
