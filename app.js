@@ -23,7 +23,7 @@ let port = 5000;
 
 let BrandUsersController = require('./Controllers/BrandUsersController');
 
-app.use('/',BrandUsersController);
+app.use('/', BrandUsersController);
 
 let CampaignsController = require('./Controllers/CampaignsController');
 
