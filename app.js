@@ -8,7 +8,7 @@ let mongoose = require('mongoose');
 
 require('dotenv').config();
 
-app.use(express.json({limit: '50mb'}));
+app.use(express.json({limit: '100mb'}));
 
 app.use(cors());
 

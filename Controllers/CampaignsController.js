@@ -12,7 +12,7 @@ const path = require('path'); // For handling file paths
 
 const CampaignsModel = require('../Models/CampaignsModels');
 
-let urlEncoded = bodyParser.urlencoded({extended: false, limit: '50mb'});
+let urlEncoded = bodyParser.urlencoded({extended: false});
 
 const storage = multer.diskStorage({
     destination: (req, file, cb)=>{
@@ -29,7 +29,7 @@ const upload = multer({ storage })
 app.post('/add_influencer_campaign', upload.single('cover'), urlEncoded, (req, res)=>{
 
     let data = {
-        status: 'complete',
+        status: req.body.status,
         type: "influencer",
         user_id: req.body.id,
         title: req.body.title,
