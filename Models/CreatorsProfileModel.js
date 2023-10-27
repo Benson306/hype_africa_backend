@@ -7,6 +7,7 @@ let CreatorProfileSchema = mongoose.Schema({
     password: String,
     phoneNumber: String,
     countryCode: String,
+    industries: [String],
     isComplete: Boolean
 })
 

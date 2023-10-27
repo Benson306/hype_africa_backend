@@ -64,6 +64,7 @@ app.post('/creator_login', urlEncoded, (req, res)=>{
                         status: 'success',
                         uid: data._id,
                         isComplete: data.isComplete,
+                        industryCount: data.industries.length
                     }
                     res.json(response);
                 }else{
@@ -72,6 +73,17 @@ app.post('/creator_login', urlEncoded, (req, res)=>{
             })
         }else{
             res.json({ status: 'failed' })
+        }
+    })
+})
+
+app.post('/update_industries', urlEncoded, (req, res)=>{
+    CreatorProfileModel.findOneAndUpdate({ _id: req.body.id}, { industries: req.body.industries}, { new: true})
+    .then(data => {
+        if(data){
+            res.json("success");
+        }else{
+            res.json("failed");
         }
     })
 })
