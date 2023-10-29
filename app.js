@@ -22,15 +22,16 @@ mongoose.connect(mongoURI);
 let port = 5000;
 
 let BrandUsersController = require('./Controllers/BrandUsersController');
-
 app.use('/', BrandUsersController);
 
 let CampaignsController = require('./Controllers/CampaignsController');
-
 app.use('/',CampaignsController);
 
 let CreatorProfileController = require('./Controllers/CreatorProfileController')
 app.use('/', CreatorProfileController)
+
+let SocialController = require('./Controllers/SocialsControllers');
+app.use('/', SocialController);
 
 app.listen(port, ()=>{
     console.log(`Connected on port ${port}`);

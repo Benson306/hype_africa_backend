@@ -8,7 +8,9 @@ let CreatorProfileSchema = mongoose.Schema({
     phoneNumber: String,
     countryCode: String,
     industries: [String],
-    isComplete: Boolean
+    isComplete: Boolean,
+    instagramUserId: String,
+    instagramUserName: String
 })
 
 let CreatorProfileModel = mongoose.model('creator_users', CreatorProfileSchema);
