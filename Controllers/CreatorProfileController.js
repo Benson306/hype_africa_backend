@@ -35,6 +35,7 @@ app.post('/create_creator_profile', urlEncoded, (req, res)=>{
                         email,
                         phoneNumber,
                         countryCode: req.body.countryCode,
+                        creatorType: req.body.creatorType,
                         password: hash,
                         isComplete: false
                     }
@@ -64,7 +65,8 @@ app.post('/creator_login', urlEncoded, (req, res)=>{
                         status: 'success',
                         uid: data._id,
                         isComplete: data.isComplete,
-                        industryCount: data.industries.length
+                        industryCount: data.industries.length,
+                        creatorType: data.creatorType
                     }
                     res.json(response);
                 }else{
@@ -81,7 +83,7 @@ app.post('/update_industries', urlEncoded, (req, res)=>{
     CreatorProfileModel.findOneAndUpdate({ _id: req.body.id}, { industries: req.body.industries}, { new: true})
     .then(data => {
         if(data){
-            res.json("success");
+            res.json({ creatorType: data.creatorType, status : "success"});
         }else{
             res.json("failed");
         }
