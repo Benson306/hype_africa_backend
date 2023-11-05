@@ -10,6 +10,7 @@ let CreatorProfileSchema = mongoose.Schema({
     industries: [String],
     creatorType: String,
     isComplete: Boolean,
+    isApproved: Number,
     instagramUserId: String,
     instagramUserName: String
 })
