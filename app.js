@@ -36,7 +36,7 @@ app.use('/', SocialController);
 let AdminController = require('./Controllers/AdminUsersController');
 app.use('/', AdminController);
 
-let CreatorApplicationsController = require('./Controllers/CreatorApplications');
+let CreatorApplicationsController = require('./Controllers/CreatorApplicationsController');
 app.use('/', CreatorApplicationsController);
 
 app.listen(port, ()=>{
