@@ -36,6 +36,9 @@ app.use('/', SocialController);
 let AdminController = require('./Controllers/AdminUsersController');
 app.use('/', AdminController);
 
+let CreatorApplicationsController = require('./Controllers/CreatorApplications');
+app.use('/', CreatorApplicationsController);
+
 app.listen(port, ()=>{
     console.log(`Connected on port ${port}`);
 })
