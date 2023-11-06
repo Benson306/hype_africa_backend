@@ -8,54 +8,45 @@ let bodyParser = require('body-parser');
 
 let urlEncoded = bodyParser.urlencoded({ extended: false});
 
-app.get('/content_creator_applicants', (req, res)=>{
+app.get('/content_creator_applicants', async (req, res)=>{
 
-    CreatorProfileModel.find({$and : [{ creatorType : 'content'}, {isComplete: true}]})
-    .then(data => {
-        if (data) {
-            let completeData = [];
+    try {
+        const creatorProfiles = await CreatorProfileModel.find({ creatorType: 'content', isComplete: true });
 
-            data.map( item => {
-                let newItem = { };
+        if (creatorProfiles) {
+            const completeData = [];
 
-                newItem._id = item._id;
-                newItem.firstName = item.firstName;
-                newItem.lastName = item.lastName;
-                newItem.countryCode = item.countryCode;
-                newItem.phoneNumber = item.phoneNumber;
-                newItem.industries = item.industries;
-
-                if(item.isApproved == "0"){
-                    completeData.push(newItem);
+            for (const item of creatorProfiles) {
+                if (item.isApproved == "0") {
+                    completeData.push({
+                        _id: item._id,
+                        firstName: item.firstName,
+                        lastName: item.lastName,
+                        countryCode: item.countryCode,
+                        phoneNumber: item.phoneNumber,
+                        industries: item.industries
+                    });
                 }
+            }
 
-            })
+            const newCompleteData = [];
 
-            let newCompleteData = [];
+            for (const data of completeData) {
+                const response = await ContentCreatorsMediaModel.findOne({ creator_id: data._id });
 
-            completeData.map( data => {
-                ContentCreatorsMediaModel.findOne({ creator_id: data._id})
-                .then(response => {
-                    if(response){
-                        let media = response.media;
+                if (response) {
+                    const media = response.media;
+                    newCompleteData.push({ ...data, media });
+                }
+            }
 
-                        let newData = {...data, media };
-
-                        newCompleteData.push(newData);
-                    }
-                })
-                .then(()=>{
-                    res.status(200).json(newCompleteData);
-                })
-            })
-
-          } else {
+            res.status(200).json(newCompleteData);
+        } else {
             res.status(404).json("Not Found");
-          }
-    })
-    .catch(err => {
+        }
+    } catch (err) {
         res.status(500).json('failed');
-    })
+    }
 })
 
 

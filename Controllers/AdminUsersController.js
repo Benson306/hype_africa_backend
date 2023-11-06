@@ -53,5 +53,39 @@ app.post('/admin_login', urlEncoded, (req, res)=>{
 })
 
 
+app.get('/admin_users', (req, res)=>{
+    AdminUserModel.find({})
+    .then(data => {
+        if(data){
+            let newData = []
+
+            data.map( user => {
+
+                let newUser = { }
+                
+                newUser.email = user.email;
+                newUser.id = user._id;
+                
+                newData.push(newUser)
+            })
+
+            res.status(200).json(newData)
+        }
+    })
+    .catch(err => {
+        res.status(500).json(err);
+    })
+})
+
+app.delete('/del_admin_users/:id', urlEncoded, (req, res)=>{
+    AdminUserModel.findOneAndDelete({_id: req.params.id})
+    .then(data => {
+            res.status(200).json('success')
+    })
+    .catch(err => {
+        res.status(500).json(err);
+    })
+})
+
 
 module.exports = app;
