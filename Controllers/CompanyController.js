@@ -12,16 +12,26 @@ const path = require('path'); // For handling file paths
 
 const bcrypt = require('bcrypt');
 
-const BrandUsersModel = require('../Models/BrandUsersModel');
-const BrandProfileModel = require('../Models/BrandProfileModel');
+const CompaniesModel = require('../Models/CompaniesModel');
 
 let urlEncoded = bodyParser.urlencoded({ extended: false});
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb)=>{
+        cb(null, './uploads');
+    },
+    filename: (req, file, cb)=>{
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
 
-app.post('/brand_signup', urlEncoded, (req, res)=>{
+const upload = multer({ storage })
+
+app.post('/company_signup', urlEncoded, upload.single('image') ,(req, res)=>{
     let email = req.body.email;
     let password = req.body.password;
     let phoneNumber = req.body.phoneNumber;
+    let logo = req.file.filename;
 
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
@@ -31,7 +41,7 @@ app.post('/brand_signup', urlEncoded, (req, res)=>{
 
     if(emailPattern.test(email) && passwordPattern.test(password) && phonePattern.test(phoneNumber)){
 
-        BrandUsersModel.find({ email: email})
+        CompaniesModel.find({ email: email})
         .then(data =>{
             if(data.length >  0){
                 res.json('Email Has Been Used');
@@ -41,14 +51,16 @@ app.post('/brand_signup', urlEncoded, (req, res)=>{
                         email,
                         phoneNumber,
                         companyName: req.body.companyName,
+                        logo,
                         countryCode: req.body.countryCode,
                         country: req.body.country,
                         city: req.body.city,
                         password: hash,
-                        isComplete: false
+                        isComplete: false,
+                        isApproved: 0
                     }
         
-                    BrandUsersModel(data).save()
+                    CompaniesModel(data).save()
                     .then(data => {
                         res.json("success");
                     })
@@ -67,11 +79,11 @@ app.post('/brand_signup', urlEncoded, (req, res)=>{
 
 } )
 
-app.post('/brand_login', urlEncoded, (req,res)=>{
+app.post('/company_login', urlEncoded, (req,res)=>{
     let email = req.body.email;
     let password = req.body.password;
 
-    BrandUsersModel.findOne({ email : email})
+    CompaniesModel.findOne({ email : email})
     .then(data =>{
         if(data){
             bcrypt.compare(password, data.password, function(err, result) {
@@ -80,6 +92,7 @@ app.post('/brand_login', urlEncoded, (req,res)=>{
                         status: 'success',
                         uid: data._id,
                         isComplete: data.isComplete,
+                        isApproved: data.isApproved
                     }
                     res.json(response);
                 }else{
@@ -92,46 +105,13 @@ app.post('/brand_login', urlEncoded, (req,res)=>{
     })
 })
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb)=>{
-        cb(null, './uploads');
-    },
-    filename: (req, file, cb)=>{
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
-})
 
-const upload = multer({ storage })
-
-app.post('/complete_profile', upload.single('image'), urlEncoded, (req, res)=>{
-    let brand_logo = req.file.filename;
-    let user_id = req.body.user_id;
-    let brand_name = req.body.brandName;
-    let about = req.body.about;
-
-    let data = {
-        user_id,
-        brand_logo,
-        brand_name,
-        about
-    }
-
-    BrandProfileModel(data).save()
-    .then(()=>{
-        BrandUsersModel.findOneAndUpdate({_id: user_id}, { isComplete: true},{ new: true})
-        .then(()=>{
-            res.json({status: 'success'})
-        })
-    })
-})
-
-
-app.get('/profile/:id', urlEncoded, (req, res)=>{
+app.get('/company_profile/:id', urlEncoded, (req, res)=>{
     let uid = req.params.id;
 
     let response = { };
 
-    BrandUsersModel.findOne({ _id: uid})
+    CompaniesModel.findOne({ _id: uid})
     .then((data)=>{
         if(data){
             response.email = data.email;
@@ -140,28 +120,17 @@ app.get('/profile/:id', urlEncoded, (req, res)=>{
             response.country = data.country;
             response.city = data.city;
             response.countryCode = data.countryCode;
+            response.logo = data.logo;
 
-            BrandProfileModel.findOne({ user_id : uid})
-            .then((profile)=>{
-                if(profile){
-                    response.brand_name = profile.brand_name;
-                    response.about = profile.about;
-                    response.brand_logo = profile.brand_logo;
-
-                    res.json(response);
-                }
-            })
-
+            res.json(response);
         }
     })
 
 })
 
-app.put('/profileWithImage/:id', upload.single('image'), urlEncoded, (req, res)=>{
-    let brand_logo = req.file.filename;
-    let user_id = req.body.user_id;
-    let brand_name = req.body.brand_name;
-    let about = req.body.about;
+app.put('/updateProfileWithImage/:id', upload.single('image'), urlEncoded, (req, res)=>{
+    let logo = req.file.filename;
+    let company_id = req.body.company_id;
     let email = req.body.email;
     let phoneNumber = req.body.phoneNumber;
     let companyName = req.body.companyName;
@@ -169,19 +138,14 @@ app.put('/profileWithImage/:id', upload.single('image'), urlEncoded, (req, res)=
     let country = req.body.country;
     let city = req.body.city;
 
-    BrandUsersModel.findOneAndUpdate({_id: user_id}, { email: email, phoneNumber: phoneNumber, companyName: companyName, country: country, city: city, countryCode: countryCode },{new: true})
+    CompaniesModel.findOneAndUpdate({_id: company_id}, { email: email, phoneNumber: phoneNumber, companyName: companyName, country: country, city: city, countryCode: countryCode, logo:  logo},{new: true})
     .then(()=>{
-        BrandProfileModel.findOneAndUpdate({user_id: user_id},{brand_name: brand_name, about: about, brand_logo: brand_logo},{new: true})
-        .then(()=>{
-            res.json('success')
-        })
+        res.json('success')
     })
 })
 
-app.put('/profileWithoutImage/:id', urlEncoded, (req, res)=>{
-    let user_id = req.body.user_id;
-    let brand_name = req.body.brand_name;
-    let about = req.body.about;
+app.put('/updateProfileWithoutImage/:id', urlEncoded, (req, res)=>{
+    let company_id = req.body.company_id;
     let email = req.body.email;
     let phoneNumber = req.body.phoneNumber;
     let companyName = req.body.companyName;
@@ -189,31 +153,27 @@ app.put('/profileWithoutImage/:id', urlEncoded, (req, res)=>{
     let country = req.body.country;
     let city = req.body.city;
 
-    BrandUsersModel.findOneAndUpdate({_id: user_id}, { email: email, phoneNumber: phoneNumber, companyName: companyName, country: country, city: city, countryCode: countryCode },{new: true})
+    CompaniesModel.findOneAndUpdate({_id: company_id}, { email: email, phoneNumber: phoneNumber, companyName: companyName, country: country, city: city, countryCode: countryCode },{new: true})
     .then(()=>{
-        BrandProfileModel.findOneAndUpdate({user_id: user_id},{brand_name: brand_name, about: about},{new: true})
-        .then(()=>{
-            res.json('success')
-        })
+        res.json('success')
     })
 
 })
 
 
-app.put('/change_password/:id', urlEncoded, (req, res)=>{
-    let id = req.params.id;
+app.put('/change_password/:company_id', urlEncoded, (req, res)=>{
+    let company_id = req.params.company_id;
 
     let oldPassword = req.body.oldPassword;
     let newPassword = req.body.newPassword;
 
-    BrandUsersModel.findOne({_id: id})
+    CompaniesModel.findOne({_id: company_id})
     .then(data => {
-        console.log(data)
         if(data){
             bcrypt.compare(oldPassword, data.password, function(err, result) {
                 if(result === true){
                     bcrypt.hash(newPassword, Number(process.env.saltRounds), function(err, hash) {
-                        BrandUsersModel.findOneAndUpdate({_id: id}, { password: hash}, { new : true})
+                        CompaniesModel.findOneAndUpdate({_id: company_id}, { password: hash}, { new : true})
                         .then(()=>{
                             res.json("success");
                         })

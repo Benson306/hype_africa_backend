@@ -21,8 +21,8 @@ mongoose.connect(mongoURI);
 
 let port = 5000;
 
-let BrandUsersController = require('./Controllers/BrandUsersController');
-app.use('/', BrandUsersController);
+let CompanyController = require('./Controllers/CompanyController');
+app.use('/', CompanyController);
 
 let CampaignsController = require('./Controllers/CampaignsController');
 app.use('/',CampaignsController);
@@ -38,6 +38,9 @@ app.use('/', AdminController);
 
 let CreatorApplicationsController = require('./Controllers/CreatorApplicationsController');
 app.use('/', CreatorApplicationsController);
+
+let BrandsController = require('./Controllers/BrandsController');
+app.use('/', BrandsController);
 
 app.listen(port, ()=>{
     console.log(`Connected on port ${port}`);
