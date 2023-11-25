@@ -31,7 +31,7 @@ app.get('/login_instagram/:user_id/:code', urlEncoded, (req, res)=>{
 
                 let result = JSON.parse(newResponse.raw_body);
 
-                CreatorProfileModel.findOneAndUpdate({_id: req.params.user_id}, { instagramUserId: result.id, instagramUserName: result.username}, { new: true})
+                CreatorProfileModel.findOneAndUpdate({_id: req.params.user_id}, { isComplete : true, instagramUserId: result.id, instagramUserName: result.username}, { new: true})
                 .then(()=>{
                     res.json("success");
                 })

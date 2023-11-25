@@ -56,7 +56,8 @@ app.post('/create_creator_profile', urlEncoded, (req, res)=>{
                         creatorType: req.body.creatorType,
                         password: hash,
                         isComplete: false,
-                        isApproved: 0
+                        isApproved: 0,
+                        averageEarning: 0
                     }
 
                     CreatorProfileModel(data).save()
@@ -86,7 +87,8 @@ app.post('/creator_login', urlEncoded, (req, res)=>{
                         isComplete: data.isComplete,
                         industryCount: data.industries.length,
                         creatorType: data.creatorType,
-                        isApproved: Number(data.isApproved)
+                        isApproved: Number(data.isApproved),
+                        averageEarning: Number(data.averageEarning)
                     }
                     res.json(response);
                 }else{
@@ -109,6 +111,19 @@ app.post('/update_industries', urlEncoded, (req, res)=>{
         }
     })
 })
+
+
+app.post('/update_average_earning', urlEncoded, (req, res)=>{
+    CreatorProfileModel.findOneAndUpdate({ _id: req.body.id}, { averageEarning: req.body.averageEarning}, { new: true})
+    .then(data => {
+        if(data){
+            res.json({ creatorType: data.creatorType, status : "success"});
+        }else{
+            res.json("failed");
+        }
+    })
+})
+
 
 app.post('/upload_content_creator_media', urlEncoded, upload.any(), (req, res)=>{
 

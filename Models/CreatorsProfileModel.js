@@ -8,6 +8,7 @@ let CreatorProfileSchema = mongoose.Schema({
     phoneNumber: String,
     countryCode: String,
     industries: [String],
+    averageEarning: Number,
     creatorType: String,
     isComplete: Boolean,
     isApproved: Number,
