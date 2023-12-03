@@ -101,6 +101,29 @@ app.post('/creator_login', urlEncoded, (req, res)=>{
     })
 })
 
+app.get('/get_all_creators', (req, res)=>{
+    CreatorProfileModel.find({})
+    .then((response)=>{
+
+        let data = [];
+
+        response.map(resp => {
+            let newData = {
+                _id: resp._id,
+                firstName: resp.firstName,
+                lastName: resp.lastName,
+                industries: resp.industries,
+                creatorType: resp.creatorType,
+                averageEarning: resp.averageEarning
+            }
+
+            data.push(newData);
+        })
+
+        res.json(data)
+    })
+})
+
 app.post('/update_industries', urlEncoded, (req, res)=>{
     CreatorProfileModel.findOneAndUpdate({ _id: req.body.id}, { industries: req.body.industries}, { new: true})
     .then(data => {

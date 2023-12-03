@@ -42,6 +42,9 @@ app.use('/', CreatorApplicationsController);
 let BrandsController = require('./Controllers/BrandsController');
 app.use('/', BrandsController);
 
+let CreatorGroupsController = require('./Controllers/CreatorGroupsController');
+app.use('/', CreatorGroupsController);
+
 app.listen(port, ()=>{
     console.log(`Connected on port ${port}`);
 })

@@ -55,4 +55,5 @@ app.get('/all_brands/:company_id', urlEncoded, (req, res)=>{
     })
 })
 
+
 module.exports = app;
