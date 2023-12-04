@@ -29,10 +29,20 @@ app.post('/creator_groups', urlEncoded, (req, res)=>{
     
 })
 
-app.get('/creator_groups', urlEncoded, (req, res)=>{
-    CreatorGroupsModel.find({})
+app.get('/creator_groups/:id', urlEncoded, (req, res)=>{
+    CreatorGroupsModel.find({brand_id: req.params.id})
     .then(data => {
         res.status(200).json(data);
+    })
+    .catch(err => {
+        req.status(404).json('failed');
+    })
+})
+
+app.put('/creator_groups/:id', urlEncoded, (req, res)=>{
+    CreatorGroupsModel.findByIdAndUpdate(req.params.id, {groupName: req.body.groupName, selectedCreators: req.body.selectedCreators}, { new: true})
+    .then(data => {
+        res.status(200).json('success');
     })
     .catch(err => {
         req.status(404).json('failed');
