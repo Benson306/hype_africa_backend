@@ -52,7 +52,10 @@ app.post('/add_influencer_campaign', upload.single('cover'), urlEncoded, (req, r
         budget: req.body.budget,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
-        numberOfDays: req.body.numberOfDays
+        numberOfDays: req.body.numberOfDays,
+        brand_id: req.body.brand_id,
+        allPartcipants: req.body.allParticipants,
+        creatorGroupsSelected: req.body.creatorGroupsSelected
     }
 
     CampaignsModel(data).save()
@@ -90,7 +93,10 @@ app.post('/add_influencer_draft_with_image', upload.single('cover'), urlEncoded,
         budget: req.body.budget,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
-        numberOfDays: req.body.numberOfDays
+        numberOfDays: req.body.numberOfDays,
+        brand_id: req.body.brand_id,
+        allPartcipants: req.body.allParticipants,
+        creatorGroupsSelected: req.body.creatorGroupsSelected
     }
 
     CampaignsModel(data).save()
@@ -128,7 +134,10 @@ app.post('/add_influencer_draft_without_image', urlEncoded, (req, res)=>{
         budget: req.body.budget,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
-        numberOfDays: req.body.numberOfDays
+        numberOfDays: req.body.numberOfDays,
+        brand_id: req.body.brand_id,
+        allPartcipants: req.body.allParticipants,
+        creatorGroupsSelected: req.body.creatorGroupsSelected
     }
 
     CampaignsModel(data).save()
