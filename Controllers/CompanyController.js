@@ -105,6 +105,13 @@ app.post('/company_login', urlEncoded, (req,res)=>{
     })
 })
 
+app.get('/companies', (req, res)=>{
+    CompaniesModel.find({})
+    .then((data)=>{
+        res.json(data)
+    })
+})
+
 
 app.get('/company_profile/:id', urlEncoded, (req, res)=>{
     let uid = req.params.id;
@@ -186,6 +193,16 @@ app.put('/change_password/:company_id', urlEncoded, (req, res)=>{
         }else{
             res.json('failed')
         }
+    })
+})
+
+app.get('/approve_company/:id/:value', urlEncoded, (req, res)=>{
+    CompaniesModel.findOneAndUpdate({_id: req.params.id}, { isApproved: req.params.value }, {new: true})
+    .then(()=>{
+        res.status(200).json("success");
+    })
+    .catch(()=>{
+        res.status(400).json("failed");
     })
 })
 

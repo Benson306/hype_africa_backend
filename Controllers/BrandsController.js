@@ -55,5 +55,15 @@ app.get('/all_brands/:company_id', urlEncoded, (req, res)=>{
     })
 })
 
+app.get('/all_brands', urlEncoded, (req, res)=>{
+    BrandsModel.find({})
+    .then((data)=>{
+        res.json(data);
+    })
+    .catch(err => {
+        res.status(500).json('failed');
+    })
+})
+
 
 module.exports = app;
