@@ -55,6 +55,16 @@ app.get('/all_brands/:company_id', urlEncoded, (req, res)=>{
     })
 })
 
+app.delete('/brand/:id', urlEncoded, (req, res)=>{
+    BrandsModel.findByIdAndRemove(req.params.id)
+    .then(()=>{
+        res.status(200).json('SUCCESS');
+    })
+    .catch(()=>{
+        res.status(500).json('failed');
+    })
+})
+
 app.get('/all_brands', urlEncoded, (req, res)=>{
     BrandsModel.find({})
     .then((data)=>{

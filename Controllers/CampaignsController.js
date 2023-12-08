@@ -149,20 +149,26 @@ app.post('/add_influencer_draft_without_image', urlEncoded, (req, res)=>{
 })
 
 
-app.get('/get_campaigns/:id/:type', urlEncoded, (req, res)=>{
+app.get('/get_campaigns/:brand_id/:type', urlEncoded, (req, res)=>{
 
     if(req.params.type == "all"){
-        CampaignsModel.find({ user_id: req.params.id })
+        CampaignsModel.find({ brand_id: req.params.brand_id })
         .then((data)=>{
             res.json(data);
         })
     }else{
-        CampaignsModel.find({ $and: [ {user_id: req.params.id}, {status: req.params.type}] })
+        CampaignsModel.find({ $and: [ {brand_id: req.params.brand_id}, {status: req.params.type}] })
         .then((data)=>{
             res.json(data);
         })
     }
     
+})
+
+app.get('/get_all_campaigns', urlEncoded, (req, res)=>{
+    CampaignsModel.find({})
+    .then(response => res.json(response))
+    .catch(err => res.json(err));
 })
 
 app.get('/get_campaigns/:type', urlEncoded, (req, res)=>{
@@ -181,9 +187,9 @@ app.get('/get_campaigns/:type', urlEncoded, (req, res)=>{
     
 })
 
-app.get('/get_campaign/:id/:url', urlEncoded, (req, res)=>{
+app.get('/get_campaign/:id', urlEncoded, (req, res)=>{
 
-    CampaignsModel.findOne({ $and: [ {user_id: req.params.id}, {_id: req.params.url}] })
+    CampaignsModel.findOne({_id: req.params.id})
     .then((data)=>{
         res.json(data);
     })
